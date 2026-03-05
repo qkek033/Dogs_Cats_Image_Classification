@@ -4,3 +4,12 @@ python-multipart
 pillow
 torch
 torchvision
+efficientnet_pytorch==0.7.1
+timm
+transformers>=4.30.0
+numpy
+pandas
+scikit-learn
+opencv-python
+streamlit
+requests

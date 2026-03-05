@@ -1,26 +1,36 @@
-import streamlit as st
-import requests
-from PIL import Image
+﻿import cv2
 import numpy as np
-import cv2
+import requests
+import streamlit as st
+from PIL import Image, UnidentifiedImageError
 
 API_URL = "http://127.0.0.1:8000/predict"
 
 st.set_page_config(page_title="Dogs vs Cats", layout="centered")
 
-st.title("🐶🐱 Dogs vs Cats Classifier")
-st.write("이미지를 업로드하면 개/고양이를 분류합니다.")
+st.title("Dogs vs Cats Classifier")
+st.write("Upload an image to classify dog vs cat.")
+user_name = st.text_input("User name (for audit log)", value="anonymous")
 
-uploaded_file = st.file_uploader("이미지 업로드", type=["jpg", "png", "jpeg"])
+uploaded_file = st.file_uploader("Upload image", type=["jpg", "png", "jpeg", "webp"])
 
 if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="업로드 이미지", use_column_width=True)
+    try:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded image", use_container_width=True)
+    except (UnidentifiedImageError, OSError):
+        st.error("Cannot read this file as an image. Please upload a valid image file.")
+        st.stop()
 
-    if st.button("예측하기"):
-        with st.spinner("분석 중..."):
-            files = {"file": uploaded_file.getvalue()}
-            response = requests.post(API_URL, files=files)
+    if st.button("Predict"):
+        try:
+            with st.spinner("Analyzing..."):
+                files = {"file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
+                headers = {"X-User-Name": (user_name or "anonymous").strip() or "anonymous"}
+                response = requests.post(API_URL, files=files, headers=headers, timeout=30)
+        except requests.RequestException:
+            st.error("Cannot connect to API server. Check if FastAPI is running.")
+            st.stop()
 
         if response.status_code == 200:
             result = response.json()
@@ -28,20 +38,20 @@ if uploaded_file is not None:
             label = result["label"]
             confidence = result["confidence"]
 
-            st.success(f"결과: {label}")
-            st.write(f"신뢰도: {confidence:.3f}")
+            st.success(f"Result: {label}")
+            st.write(f"Confidence: {confidence:.3f}")
+            st.caption(f"Request ID: {result.get('request_id', '-')}")
 
-            # Grad-CAM 시각화
             cam = np.array(result["cam"])
-
-            heatmap = cv2.applyColorMap(
-                np.uint8(255 * cam),
-                cv2.COLORMAP_JET
-            )
-
+            heatmap = cv2.applyColorMap(np.uint8(255 * cam), cv2.COLORMAP_JET)
             heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
 
-            st.image(heatmap, caption=" Grad-CAM")
-
+            st.image(heatmap, caption="Grad-CAM", use_container_width=True)
         else:
-            st.error("API 요청 실패")
+            detail = "Request failed."
+            try:
+                payload = response.json()
+                detail = payload.get("detail", detail)
+            except ValueError:
+                pass
+            st.error(f"Error ({response.status_code}): {detail}")
