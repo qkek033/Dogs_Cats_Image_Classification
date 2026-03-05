@@ -37,8 +37,9 @@ if uploaded_file is not None:
 
             label = result["label"]
             confidence = result["confidence"]
+            label_ko = "강아지" if label == "dog" else "고양이" if label == "cat" else "알 수 없음"
 
-            st.success(f"Result: {label}")
+            st.success(f"결과: {label_ko}입니다.")
             st.write(f"Confidence: {confidence:.3f}")
             st.caption(f"Request ID: {result.get('request_id', '-')}")
 
