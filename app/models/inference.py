@@ -2,7 +2,6 @@ import os
 from io import BytesIO
 from pathlib import Path
 
-import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -62,6 +61,12 @@ def preprocess_image(image_bytes: bytes) -> torch.Tensor:
     
     return transform(img).unsqueeze(0).to(device)
 
+def resize_array(array, size=(224, 224)):
+    """NumPy 배열 크기 조정 (cv2 없이)"""
+    img = Image.fromarray((array * 255).astype('uint8'), mode='L')
+    img = img.resize(size, Image.Resampling.BILINEAR)
+    return np.array(img) / 255.0
+
 def generate_grad_cam(model, input_tensor: torch.Tensor, class_idx: int) -> np.ndarray:
     """Grad-CAM 생성"""
     input_tensor.requires_grad = True
@@ -87,7 +92,7 @@ def generate_grad_cam(model, input_tensor: torch.Tensor, class_idx: int) -> np.n
     if cam.max() > 0:
         cam = cam / cam.max()
     
-    cam = cv2.resize(cam, (224, 224))
+    cam = resize_array(cam, (224, 224))
     
     return cam
 

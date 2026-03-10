@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 import streamlit as st
 from PIL import Image, UnidentifiedImageError
@@ -35,7 +34,7 @@ if uploaded_file is not None:
     
     try:
         image = Image.open(uploaded_file)
-        st.image(image, caption="업로드된 이미지", use_container_width=False, width=400)
+        st.image(image, caption="업로드된 이미지", width=400)
     except (UnidentifiedImageError, OSError):
         st.error("이미지를 읽을 수 없습니다. 유효한 이미지 파일을 업로드하세요.")
         st.stop()
@@ -61,9 +60,9 @@ if uploaded_file is not None:
                 if rejected:
                     st.warning(f"신뢰도가 낮습니다 ({reject_reason})")
                 
-                cam_visual = cv2.applyColorMap(np.uint8(255 * cam), cv2.COLORMAP_JET)
-                cam_visual = cv2.cvtColor(cam_visual, cv2.COLOR_BGR2RGB)
-                st.image(cam_visual, caption="모델 주목 영역 (Grad-CAM)", use_container_width=False, width=400)
+                if cam is not None:
+                    cam_pil = Image.fromarray((255 * cam).astype('uint8'), mode='L')
+                    st.image(cam_pil, caption="모델 주목 영역 (Grad-CAM)", width=400)
                 
             except Exception as e:
                 st.error(f"예측 실패: {str(e)}")
