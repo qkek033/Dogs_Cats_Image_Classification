@@ -1,9 +1,13 @@
+import sys
+from pathlib import Path
+
 import numpy as np
 import streamlit as st
 from PIL import Image, UnidentifiedImageError
 import torch
 
-from app.models.inference import predict_image
+sys.path.insert(0, str(Path(__file__).parent))
+from models.inference import predict_image
 
 st.set_page_config(
     page_title="Dogs vs Cats Classifier",
