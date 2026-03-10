@@ -13,7 +13,7 @@ api = HfApi()
 model_file = Path("models/model.pth")
 
 if not model_file.exists():
-    print(f"❌ 모델 파일을 찾을 수 없습니다: {model_file}")
+    print(f" 모델 파일을 찾을 수 없습니다: {model_file}")
     exit(1)
 
 repo_id = "qkek033/Dogs_Cats_Image_Classification"
@@ -27,6 +27,6 @@ try:
         repo_id=repo_id,
         repo_type="model",
     )
-    print(f"✅ 업로드 완료!")
+    print(f" 업로드 완료!")
 except Exception as e:
-    print(f"❌ 업로드 실패: {e}")
+    print(f" 업로드 실패: {e}")
