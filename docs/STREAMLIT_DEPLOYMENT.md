@@ -5,10 +5,10 @@
 GitHub 저장소: https://github.com/qkek033/Dogs_Cats_Image_Classification
 
 다음 파일들이 있는지 확인하세요:
-- ✅ `app/streamlit_app.py` (메인 앱)
-- ✅ `app/models/inference.py` (모델 로드)
-- ✅ `requirements.txt` (의존성)
-- ✅ `.streamlit/config.toml` (설정)
+-  `app/streamlit_app.py` (메인 앱)
+-  `app/models/inference.py` (모델 로드)
+-  `requirements.txt` (의존성)
+-  `.streamlit/config.toml` (설정)
 
 ---
 
@@ -40,10 +40,10 @@ GitHub 저장소: https://github.com/qkek033/Dogs_Cats_Image_Classification
 
 ## 주의사항
 
-⚠️ **HuggingFace Hub 모델이 public이어야 합니다**
+ **HuggingFace Hub 모델이 public이어야 합니다**
 - https://huggingface.co/qkek033/Dogs_Cats_Image_Classification 확인
 
-✅ **모델 첫 다운로드는 시간이 걸립니다**
+ **모델 첫 다운로드는 시간이 걸립니다**
 - 약 300MB 크기
 - 이후 캐시에서 빠르게 로드
 

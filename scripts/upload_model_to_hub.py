@@ -18,7 +18,7 @@ if not model_file.exists():
 
 repo_id = "qkek033/Dogs_Cats_Image_Classification"
 
-print(f"🚀 업로드 시작: {model_file} -> {repo_id}")
+print(f" 업로드 시작: {model_file} -> {repo_id}")
 
 try:
     api.upload_file(

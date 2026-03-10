@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 from pathlib import Path
 
 import numpy as np
@@ -24,7 +24,7 @@ st.write("""
 with st.sidebar:
     st.markdown("### 정보")
     st.markdown("""
-    - **모델**: EfficientNet-B7
+    - **모델**: SimpleCNN
     - **GPU**: CUDA 사용 가능시 GPU에서 실행
     """)
     

@@ -126,4 +126,4 @@ http://localhost:8501 에서 확인
 
 ---
 
-준비 완료! 이제 HuggingFace에 모델 업로드하고 Streamlit Cloud에 배포하면 됩니다! 🎉
+준비 완료! 이제 HuggingFace에 모델 업로드하고 Streamlit Cloud에 배포하면 됩니다! 
