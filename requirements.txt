@@ -11,6 +11,6 @@ numpy
 pandas
 scikit-learn
 opencv-python
-streamlit
+streamlit>=1.28.0
 requests
 huggingface-hub
