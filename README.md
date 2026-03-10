@@ -1,11 +1,14 @@
-﻿# Dogs vs Cats Classifier
+# Dogs vs Cats Classifier
 
-강아지/고양이 이미지 분류를 위한 FastAPI + Streamlit 프로젝트입니다.
+Streamlit으로 배포된 강아지/고양이 이미지 분류 AI 모델입니다.
 
-- `GET /health`
-- `POST /predict`
-- 모델 백본: `simplecnn`(기본), `efficientnet`, `vit`, `auto`
-- 업로드 감사 로그(JSON line): 파일 + 터미널 동일 포맷 출력
+**배포 링크**: https://dogscatsimageclassification-tc8hscjvvx7xrtfy7wtbcy.streamlit.app/
+
+## 특징
+- SimpleCNN 모델 기반
+- HuggingFace Hub에서 모델 자동 다운로드
+- Grad-CAM 시각화로 모델의 주목 영역 표시
+- GPU 지원 (CUDA 사용 가능 시)
 
 ## 문서
 - 요구사항 문서: [docs/requirements.md](docs/requirements.md)

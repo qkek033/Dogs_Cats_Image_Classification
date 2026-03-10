@@ -31,7 +31,7 @@ with st.sidebar:
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     st.markdown(f"**현재 장치**: {device}")
 
-uploaded_file = st.file_uploader("이미지 선택", type=["jpg", "png", "jpeg", "webp"])
+uploaded_file = st.file_uploader("이미지 파일 선택", type=["jpg", "png", "jpeg", "webp"])
 
 if uploaded_file is not None:
     st.markdown("---")
