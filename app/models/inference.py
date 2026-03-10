@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from huggingface_hub import hf_hub_download
 from PIL import Image
@@ -13,6 +14,30 @@ MODEL_REPO_ID = "qkek033/Dogs_Cats_Image_Classification"
 MODEL_NAME = "model.pth"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+class SimpleCNN(nn.Module):
+    def __init__(self, num_classes=2):
+        super(SimpleCNN, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(3, 32, 3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, 2),
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2, 2),
+        )
+        self.fc = nn.Sequential(
+            nn.Linear(64 * 56 * 56, 128),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(128, num_classes)
+        )
+    
+    def forward(self, x):
+        x = self.conv(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
 
 def download_model_from_hub() -> str:
     """HuggingFace Hub에서 모델 다운로드"""
@@ -27,10 +52,9 @@ def download_model_from_hub() -> str:
         raise RuntimeError(f"Failed to download model from HuggingFace Hub: {e}")
 
 def load_model(model_path: str):
-    """모델 로드"""
+    """SimpleCNN 모델 로드"""
     try:
-        from efficientnet_pytorch import EfficientNet
-        model = EfficientNet.from_pretrained('efficientnet-b7', num_classes=2)
+        model = SimpleCNN(num_classes=2)
         checkpoint = torch.load(model_path, map_location=device)
         model.load_state_dict(checkpoint)
         model.to(device)
