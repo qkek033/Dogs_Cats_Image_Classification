@@ -35,6 +35,42 @@ streamlit run app/streamlit_app.py
 
 그 후 브라우저에서 `http://localhost:8501` 접속
 
+## 모델 재학습 (선택사항)
+
+### 1. 데이터 준비
+
+1. [Kaggle Dogs vs Cats Redux](https://www.kaggle.com/c/dogs-vs-cats-redux-kernels-edition) 데이터 다운로드
+2. 다음과 같이 정렬:
+```
+data/train/
+├── cats/
+│   ├── cat.1.jpg
+│   ├── cat.2.jpg
+│   └── ...
+└── dogs/
+    ├── dog.1.jpg
+    ├── dog.2.jpg
+    └── ...
+```
+
+### 2. 모델 학습
+
+```powershell
+python train_model.py
+```
+
+학습 완료 후 `models/model.pth` 생성됨
+
+### 3. HuggingFace Hub에 업로드
+
+```powershell
+# 토큰 설정 (Windows PowerShell)
+$env:HF_TOKEN = 'your_huggingface_token'
+
+# 업로드
+python upload_to_hub.py
+```
+
 ## 사용 방법
 
 1. **이미지 선택**: "이미지 파일 선택" 버튼으로 jpg/png/jpeg/webp 파일 업로드
