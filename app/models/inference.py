@@ -15,7 +15,7 @@ MODEL_NAME = "model.pth"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-__version__ = "1.0.5"
+__version__ = "1.0.6"
 
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=2):
@@ -29,9 +29,9 @@ class SimpleCNN(nn.Module):
             nn.MaxPool2d(2, 2),
         )
         self.fc = nn.Sequential(
+            nn.Dropout(0.5),
             nn.Linear(32 * 32 * 32, 128),
             nn.ReLU(inplace=True),
-            nn.Dropout(0.5),
             nn.Linear(128, num_classes)
         )
     
