@@ -15,7 +15,7 @@ MODEL_NAME = "model.pth"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-__version__ = "4.1.0"
+__version__ = "5.0.0"
 
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=2):
@@ -141,12 +141,16 @@ def predict_image(image_bytes: bytes):
         label = labels[class_idx]
         
         # 두 클래스의 확률 확인
-        top_prob = confidence_score
-        second_prob = probabilities[0, 1 - class_idx].item()
-        margin = top_prob - second_prob
+        cat_prob = probabilities[0, 0].item()
+        dog_prob = probabilities[0, 1].item()
         
-        # 합리적인 조건: 신뢰도 80% 이상 AND 클래스 차이 10% 이상
-        rejected = (confidence_score < 0.80) or (margin < 0.10)
+        # 조건:
+        # 1. 고양이 또는 강아지 중 하나가 70% 이상이어야 함
+        # 2. 두 클래스의 차이가 30% 이상이어야 함
+        max_prob = max(cat_prob, dog_prob)
+        margin = max_prob - min(cat_prob, dog_prob)
+        
+        rejected = (max_prob < 0.70) or (margin < 0.30)
         reject_reason = "not_animal" if rejected else None
         
         # 거부된 경우 Grad-CAM 생성 안 함
