@@ -53,7 +53,7 @@ if uploaded_file is not None:
                 st.markdown("### 결과")
                 
                 if rejected:
-                    st.error("올바르지 않은 사진입니다. 고양이나 강아지 사진을 업로드해주세요.")
+                    st.error("올바르지 않은 사진입니다. 다시 올려주세요!")
                 else:
                     label_ko = "강아지" if label == "dog" else "고양이"
                     st.success(f"**{label_ko}**")
