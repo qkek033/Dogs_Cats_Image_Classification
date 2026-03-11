@@ -15,6 +15,8 @@ MODEL_NAME = "model.pth"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+__version__ = "1.0.5"
+
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=2):
         super(SimpleCNN, self).__init__()
@@ -27,7 +29,7 @@ class SimpleCNN(nn.Module):
             nn.MaxPool2d(2, 2),
         )
         self.fc = nn.Sequential(
-            nn.Linear(32 * 56 * 56, 128),
+            nn.Linear(32 * 32 * 32, 128),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
             nn.Linear(128, num_classes)
@@ -75,7 +77,7 @@ def preprocess_image(image_bytes: bytes) -> torch.Tensor:
     img = Image.open(BytesIO(image_bytes)).convert('RGB')
     
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),
+        transforms.Resize((128, 128)),
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.485, 0.456, 0.406],
@@ -85,7 +87,7 @@ def preprocess_image(image_bytes: bytes) -> torch.Tensor:
     
     return transform(img).unsqueeze(0).to(device)
 
-def resize_array(array, size=(224, 224)):
+def resize_array(array, size=(128, 128)):
     """NumPy 배열 크기 조정 (cv2 없이)"""
     img = Image.fromarray((array * 255).astype('uint8'), mode='L')
     img = img.resize(size, Image.Resampling.BILINEAR)
@@ -116,7 +118,7 @@ def generate_grad_cam(model, input_tensor: torch.Tensor, class_idx: int) -> np.n
     if cam.max() > 0:
         cam = cam / cam.max()
     
-    cam = resize_array(cam, (224, 224))
+    cam = resize_array(cam, (128, 128))
     
     return cam
 
