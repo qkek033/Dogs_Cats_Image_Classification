@@ -67,25 +67,34 @@ if uploaded_file is not None:
                     if cam is not None:
                         cam_normalized = cam.astype('float32')
                         
+                        # 강렬한 컬러맵: 빨강(높음) - 노랑 - 파랑(낮음)
                         heatmap = np.zeros((cam.shape[0], cam.shape[1], 3), dtype=np.uint8)
+                        
+                        # 빨간색 채널: 높은 활성화
                         heatmap[:, :, 0] = (cam_normalized * 255).astype('uint8')
-                        heatmap[:, :, 1] = ((1 - cam_normalized) * 128).astype('uint8')
-                        heatmap[:, :, 2] = ((1 - cam_normalized) * 255).astype('uint8')
+                        
+                        # 초록색 채널: 중간 활성화
+                        heatmap[:, :, 1] = (np.sin(cam_normalized * np.pi) * 200).astype('uint8')
+                        
+                        # 파란색 채널: 낮은 활성화
+                        heatmap[:, :, 2] = ((1 - cam_normalized) * 200).astype('uint8')
                         
                         heatmap_img = Image.fromarray(heatmap, mode='RGB')
                         
+                        # 원본 이미지 + 히트맵 강렬한 오버레이
                         original_resized = image.resize((128, 128))
                         original_array = np.array(original_resized).astype('float32')
                         heatmap_array = np.array(heatmap).astype('float32')
                         
-                        blended = (original_array * 0.6 + heatmap_array * 0.4).astype('uint8')
+                        # 30% 원본 + 70% 히트맵 (히트맵 더 선명)
+                        blended = (original_array * 0.3 + heatmap_array * 0.7).astype('uint8')
                         blended_img = Image.fromarray(blended, mode='RGB')
                         
                         col1, col2 = st.columns(2)
                         with col1:
-                            st.image(heatmap_img, caption="히트맵 (빨강: 높은 활성화)", width=300)
+                            st.image(heatmap_img, caption="히트맵 (빨강: 높은 활성화, 파랑: 낮은 활성화)", use_column_width=True)
                         with col2:
-                            st.image(blended_img, caption="원본 + 히트맵 오버레이", width=300)
+                            st.image(blended_img, caption="원본 + 히트맵 오버레이", use_column_width=True)
                 
             except Exception as e:
                 st.error(f"예측 실패: {str(e)}")
