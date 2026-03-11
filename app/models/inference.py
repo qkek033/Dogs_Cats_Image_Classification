@@ -15,7 +15,7 @@ MODEL_NAME = "model.pth"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-__version__ = "3.2.0"
+__version__ = "4.0.0"
 
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=2):
@@ -140,13 +140,13 @@ def predict_image(image_bytes: bytes):
         labels = ["cat", "dog"]
         label = labels[class_idx]
         
-        # 신뢰도가 99% 미만이면 거부 또는 두 클래스의 차이가 5% 미만이면 거부
+        # 두 클래스의 확률 확인
         top_prob = confidence_score
         second_prob = probabilities[0, 1 - class_idx].item()
         margin = top_prob - second_prob
         
-        # 신뢰도 99% 이상 AND 두 클래스 차이 5% 이상이어야 인정
-        rejected = (confidence_score < 0.99) or (margin < 0.05)
+        # 매우 엄격한 조건: 신뢰도 99.7% 이상 AND 클래스 차이 15% 이상
+        rejected = (confidence_score < 0.997) or (margin < 0.15)
         reject_reason = "not_animal" if rejected else None
         
         # 거부된 경우 Grad-CAM 생성 안 함
