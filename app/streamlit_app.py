@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+import numpy as np
 import streamlit as st
 from PIL import Image, UnidentifiedImageError
 import torch
@@ -64,8 +65,27 @@ if uploaded_file is not None:
                     st.metric("신뢰도", f"{confidence:.1%}")
                     
                     if cam is not None:
-                        cam_pil = Image.fromarray((255 * cam).astype('uint8'), mode='L')
-                        st.image(cam_pil, caption="모델 주목 영역 (Grad-CAM)", width=400)
+                        cam_normalized = cam.astype('float32')
+                        
+                        heatmap = np.zeros((cam.shape[0], cam.shape[1], 3), dtype=np.uint8)
+                        heatmap[:, :, 0] = (cam_normalized * 255).astype('uint8')
+                        heatmap[:, :, 1] = ((1 - cam_normalized) * 128).astype('uint8')
+                        heatmap[:, :, 2] = ((1 - cam_normalized) * 255).astype('uint8')
+                        
+                        heatmap_img = Image.fromarray(heatmap, mode='RGB')
+                        
+                        original_resized = image.resize((128, 128))
+                        original_array = np.array(original_resized).astype('float32')
+                        heatmap_array = np.array(heatmap).astype('float32')
+                        
+                        blended = (original_array * 0.6 + heatmap_array * 0.4).astype('uint8')
+                        blended_img = Image.fromarray(blended, mode='RGB')
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.image(heatmap_img, caption="히트맵 (빨강: 높은 활성화)", width=300)
+                        with col2:
+                            st.image(blended_img, caption="원본 + 히트맵 오버레이", width=300)
                 
             except Exception as e:
                 st.error(f"예측 실패: {str(e)}")
