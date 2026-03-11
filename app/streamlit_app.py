@@ -60,9 +60,9 @@ if uploaded_file is not None:
                     
                     progress_bar = st.progress(0)
                     for percent_complete in range(int(confidence * 100) + 1):
-                        progress_bar.progress(percent_complete / 100)
+                        progress_bar.progress(min(confidence, 0.99))
                     
-                    st.metric("신뢰도", f"{confidence:.1%}")
+                    st.metric("신뢰도", f"{confidence:.2%}")
                     
                     if cam is not None:
                         cam_normalized = cam.astype('float32')

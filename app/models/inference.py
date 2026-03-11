@@ -15,7 +15,7 @@ MODEL_NAME = "model.pth"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-__version__ = "3.1.0"
+__version__ = "3.2.0"
 
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=2):
