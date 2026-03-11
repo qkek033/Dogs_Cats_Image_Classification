@@ -48,24 +48,24 @@ if uploaded_file is not None:
                 image_bytes = uploaded_file.getvalue()
                 label, confidence, cam, rejected, reject_reason = predict_image(image_bytes)
                 
-                label_ko = "강아지" if label == "dog" else "고양이"
-                
                 st.markdown("---")
                 st.markdown("### 결과")
-                st.success(f"**{label_ko}**")
-                
-                progress_bar = st.progress(0)
-                for percent_complete in range(int(confidence * 100) + 1):
-                    progress_bar.progress(percent_complete / 100)
-                
-                st.metric("신뢰도", f"{confidence:.1%}")
                 
                 if rejected:
-                    st.warning(f"신뢰도가 낮습니다 ({reject_reason})")
-                
-                if cam is not None:
-                    cam_pil = Image.fromarray((255 * cam).astype('uint8'), mode='L')
-                    st.image(cam_pil, caption="모델 주목 영역 (Grad-CAM)", width=400)
+                    st.error("올바르지 않은 사진입니다. 고양이나 강아지 사진을 업로드해주세요.")
+                else:
+                    label_ko = "강아지" if label == "dog" else "고양이"
+                    st.success(f"**{label_ko}**")
+                    
+                    progress_bar = st.progress(0)
+                    for percent_complete in range(int(confidence * 100) + 1):
+                        progress_bar.progress(percent_complete / 100)
+                    
+                    st.metric("신뢰도", f"{confidence:.1%}")
+                    
+                    if cam is not None:
+                        cam_pil = Image.fromarray((255 * cam).astype('uint8'), mode='L')
+                        st.image(cam_pil, caption="모델 주목 영역 (Grad-CAM)", width=400)
                 
             except Exception as e:
                 st.error(f"예측 실패: {str(e)}")

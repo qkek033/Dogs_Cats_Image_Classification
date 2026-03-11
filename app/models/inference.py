@@ -15,7 +15,7 @@ MODEL_NAME = "model.pth"
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-__version__ = "1.0.6"
+__version__ = "1.0.7"
 
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes=2):
@@ -142,8 +142,8 @@ def predict_image(image_bytes: bytes):
         
         cam = generate_grad_cam(model, input_tensor, class_idx)
         
-        rejected = confidence_score < 0.5
-        reject_reason = "low_confidence" if rejected else None
+        rejected = confidence_score < 0.7
+        reject_reason = "not_animal" if rejected else None
         
         return label, confidence_score, cam, rejected, reject_reason
     
